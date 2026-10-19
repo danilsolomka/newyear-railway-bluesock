@@ -1,0 +1,611 @@
+<section class="vb-g7c" data-section-name="Поздравительная открытка" aria-label="Поздравительная фото-карусель" data-vibeblock-unique-section="yes">
+<style>
+  .vb-g7c,
+  .vb-g7c * { box-sizing: border-box; }
+  .vb-g7c input,
+  .vb-g7c textarea,
+  .vb-g7c select { font: inherit; }
+
+  .vb-g7c {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: #000;
+    font-family: var(--t-text-font, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif);
+  }
+
+  .vb-g7c__frame {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vb-g7c__viewport {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-x pinch-zoom;
+  }
+  .vb-g7c__viewport::-webkit-scrollbar { display: none; }
+
+  .vb-g7c__slide {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+  }
+
+  .vb-g7c__slide-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .vb-g7c__slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.25) 100%);
+    z-index: 2;
+  }
+
+  .vb-g7c__tap-area {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 4;
+    cursor: pointer;
+  }
+  .vb-g7c__tap-area--left { left: 0; }
+  .vb-g7c__tap-area--right { right: 0; }
+
+  .vb-g7c__slide-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    padding: 24px 20px max(80px, env(safe-area-inset-bottom));
+    color: #fff;
+    text-align: left;
+    max-width: 640px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+    pointer-events: none;
+  }
+  .vb-g7c__slide.is-active .vb-g7c__slide-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .vb-g7c__eyebrow {
+    font-family: var(--t-headline-font, var(--t-text-font, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif));
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 12px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  }
+
+  .vb-g7c__title {
+    font-family: var(--t-headline-font, var(--t-text-font, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif));
+    font-size: clamp(32px, 9vw, 68px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin: 0 0 12px 0;
+    text-wrap: balance;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.5);
+  }
+
+  .vb-g7c__text {
+    font-family: var(--t-text-font, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif);
+    font-size: clamp(16px, 4.5vw, 22px);
+    line-height: 1.25; /* Уменьшенный межстрочный интервал */
+    opacity: 0.9;
+    margin: 0;
+    text-wrap: pretty;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.45);
+  }
+
+  .vb-g7c__indicators {
+    position: absolute;
+    top: max(12px, env(safe-area-inset-top));
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    gap: 6px;
+    padding: 0 16px;
+    pointer-events: none;
+  }
+
+  .vb-g7c__indicator {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .vb-g7c__indicator-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: rgba(255,255,255,0.95);
+    border-radius: 2px;
+    animation: vb-g7c-progress 5s linear forwards; 
+  }
+
+  .vb-g7c__indicator--completed .vb-g7c__indicator-fill {
+    width: 100%;
+    animation: none;
+  }
+
+  @keyframes vb-g7c-progress {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  .vb-g7c__audio-btn {
+    position: absolute;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    right: 16px;
+    z-index: 11;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .vb-g7c__audio-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+  }
+  .vb-g7c__audio-btn:active {
+    transform: scale(0.95);
+  }
+  .vb-g7c__audio-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  @media (min-width: 769px) {
+    .vb-g7c {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d0d;
+    }
+    .vb-g7c__frame {
+      width: 100%;
+      max-width: 420px;
+      height: 85vh;
+      max-height: 860px;
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+    }
+    .vb-g7c__frame::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36%;
+      height: 24px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      z-index: 20;
+    }
+    .vb-g7c__viewport {
+      border-radius: 28px;
+    }
+    .vb-g7c__indicators {
+      top: max(44px, env(safe-area-inset-top));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vb-g7c__indicator--active .vb-g7c__indicator-fill {
+      animation: none;
+      width: 100%;
+    }
+    .vb-g7c__slide-content {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<div class="vb-g7c__frame">
+  <div class="vb-g7c__indicators" id="vb-g7c-indicators" role="tablist" aria-label="Слайды">
+    <div class="vb-g7c__indicator vb-g7c__indicator--active" role="tab" aria-selected="true" aria-label="Слайд 1">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 2">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 3">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 4">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 5">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 6">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 7">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 8">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 9">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+    <div class="vb-g7c__indicator" role="tab" aria-selected="false" aria-label="Слайд 10">
+      <div class="vb-g7c__indicator-fill"></div>
+    </div>
+  </div>
+
+  <button class="vb-g7c__audio-btn" id="vb-g7c-audio-btn" aria-label="Включить музыку">
+    <svg id="vb-g7c-icon-play" viewBox="0 0 24 24" aria-hidden="true" style="display: block;">
+      <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
+    </svg>
+    <svg id="vb-g7c-icon-pause" viewBox="0 0 24 24" aria-hidden="true" style="display: none;">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+    </svg>
+  </button>
+
+  <!-- ОБНОВЛЕННАЯ ССЫЛКА НА АУДИО -->
+  <audio id="vb-g7c-audio" loop preload="auto" src="https://dl.dropboxusercontent.com/scl/fi/xd2wry2ss13o706kz9zvy/Nu_pogodi_-_Net_Ded_Moroz_75339320-mp3cut.net.mp3?rlkey=elzo97fc5fh8ku0ga6zf5f4dh&st=udbi4ipm&dl=0&raw=1"></audio>
+
+  <div class="vb-g7c__viewport" id="vb-g7c-viewport">
+    <!-- СЛАЙД 1: ОБНОВЛЕННОЕ ИЗОБРАЖЕНИЕ -->
+    <div class="vb-g7c__slide is-active" aria-roledescription="slide" aria-label="Слайд 1 из 10">
+      <img class="vb-g7c__slide-bg" alt="" loading="eager" decoding="async" src="https://dl.dropboxusercontent.com/scl/fi/oy9k25mmnap7ys8cxwt1w/qwen_image_1792269704707.jpg?rlkey=km5r19rfd39ue6ajbxi9oisa5&st=evtdzzgy&dl=0&raw=1">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title">ПОЗДРАВЛЯЕМ<br>С НОВЫМ ГОДОМ!</h2>
+        <p class="vb-g7c__text">С уважением, <br>Юго-Восточная <br>железная дорога!</p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 2 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild3164-3832-4631-b239-303734663035/AUxsrcxNHXtYJm8N85zG.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 3 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild3631-6338-4438-a138-663566323433/KAOkgXETp7ZeKANstDaP.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 4 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild6231-3436-4664-b936-393839376634/photo_53728999176192.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 5 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild6631-3739-4438-b135-626264623064/ylx1YPUZjWP3-WOxL6RT.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 6 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild3164-3832-4631-b239-303734663035/AUxsrcxNHXtYJm8N85zG.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 7 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild3631-6338-4438-a138-663566323433/KAOkgXETp7ZeKANstDaP.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 8 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild6231-3436-4664-b936-393839376634/photo_53728999176192.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 9 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild6631-3739-4438-b135-626264623064/ylx1YPUZjWP3-WOxL6RT.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+
+    <div class="vb-g7c__slide" aria-roledescription="slide" aria-label="Слайд 10 из 10">
+      <img class="vb-g7c__slide-bg" src="https://static.tildacdn.pub/tild6466-3366-4361-a266-666539663336/qwen_image_179207155.jpg" alt="" loading="lazy" decoding="async">
+      <div class="vb-g7c__slide-overlay"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
+      <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
+      <div class="vb-g7c__slide-content">
+        <p class="vb-g7c__eyebrow"></p>
+        <h2 class="vb-g7c__title"></h2>
+        <p class="vb-g7c__text"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var section = document.querySelector('.vb-g7c');
+  if(!section) return;
+
+  var viewport = section.querySelector('#vb-g7c-viewport');
+  var slides = section.querySelectorAll('.vb-g7c__slide');
+  var indicators = section.querySelectorAll('.vb-g7c__indicator');
+  var tapLeft = section.querySelectorAll('.vb-g7c__tap-area--left');
+  var tapRight = section.querySelectorAll('.vb-g7c__tap-area--right');
+  var audio = section.querySelector('#vb-g7c-audio');
+  var audioBtn = section.querySelector('#vb-g7c-audio-btn');
+  var iconPlay = section.querySelector('#vb-g7c-icon-play');
+  var iconPause = section.querySelector('#vb-g7c-icon-pause');
+  var total = slides.length;
+  var current = 0;
+  var timer = null;
+  var musicStarted = false;
+
+  function getDurationForSlide(index) {
+    if (index === 0) {
+      return 10000; // 10 секунд для первого слайда
+    }
+    return 6500; // 6.5 секунд для всех остальных слайдов
+  }
+
+  function updateAudioIcons() {
+    if (audio.paused) {
+      if (iconPlay) iconPlay.style.display = 'block';
+      if (iconPause) iconPause.style.display = 'none';
+      if (audioBtn) audioBtn.setAttribute('aria-label', 'Включить музыку');
+    } else {
+      if (iconPlay) iconPlay.style.display = 'none';
+      if (iconPause) iconPause.style.display = 'block';
+      if (audioBtn) audioBtn.setAttribute('aria-label', 'Выключить музыку');
+    }
+  }
+
+  function playMusic() {
+    if (musicStarted) return;
+    musicStarted = true;
+    audio.play().then(function() {
+      updateAudioIcons();
+    }).catch(function(err) {
+      console.log('Ошибка воспроизведения:', err);
+      musicStarted = false;
+    });
+  }
+
+  function tryAutoplay() {
+    audio.play().then(function() {
+      musicStarted = true;
+      updateAudioIcons();
+    }).catch(function() {
+      setupFirstTouch();
+    });
+  }
+
+  function setupFirstTouch() {
+    var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    function onFirstInteraction() {
+      playMusic();
+      document.removeEventListener('touchstart', onFirstInteraction, true);
+      document.removeEventListener('touchend', onFirstInteraction, true);
+      document.removeEventListener('click', onFirstInteraction, true);
+    }
+
+    if (isMobile) {
+      document.addEventListener('touchstart', onFirstInteraction, { once: true, passive: true });
+      document.addEventListener('touchend', onFirstInteraction, { once: true, passive: true });
+      document.addEventListener('click', onFirstInteraction, { once: true });
+    } else {
+      document.addEventListener('click', onFirstInteraction, { once: true });
+    }
+  }
+
+  function updateIndicators(index) {
+    for(var i = 0; i < total; i++) {
+      var ind = indicators[i];
+      var fill = ind.querySelector('.vb-g7c__indicator-fill');
+      ind.classList.remove('vb-g7c__indicator--active', 'vb-g7c__indicator--completed');
+      ind.setAttribute('aria-selected', 'false');
+      if(fill) fill.style.animation = 'none';
+      if(i < index) {
+        ind.classList.add('vb-g7c__indicator--completed');
+      } else if(i === index) {
+        ind.classList.add('vb-g7c__indicator--active');
+        ind.setAttribute('aria-selected', 'true');
+        void fill.offsetWidth;
+        var durationSec = getDurationForSlide(i) / 1000;
+        fill.style.animation = 'vb-g7c-progress ' + durationSec + 's linear forwards';
+      }
+    }
+  }
+
+  function updateActiveSlide(index) {
+    for(var i = 0; i < total; i++) {
+      slides[i].classList.toggle('is-active', i === index);
+    }
+  }
+
+  function goTo(index) {
+    if(index < 0 || index >= total) return;
+    current = index;
+    var w = viewport.clientWidth;
+    viewport.scrollTo({ left: index * w, behavior: 'smooth' });
+    updateIndicators(index);
+    updateActiveSlide(index);
+    resetTimer();
+  }
+
+  function next() {
+    if(current < total - 1) goTo(current + 1);
+    else goTo(0);
+  }
+
+  function prev() {
+    if(current > 0) goTo(current - 1);
+  }
+
+  function resetTimer() {
+    if(timer) clearTimeout(timer);
+    var duration = getDurationForSlide(current);
+    timer = setTimeout(next, duration);
+  }
+
+  function onScroll() {
+    if(!viewport) return;
+    var w = viewport.clientWidth || window.innerWidth;
+    var newIndex = Math.round(viewport.scrollLeft / w);
+    if(newIndex !== current && newIndex >= 0 && newIndex < total) {
+      current = newIndex;
+      updateIndicators(current);
+      updateActiveSlide(current);
+      resetTimer();
+    }
+  }
+
+  viewport.addEventListener('scroll', onScroll, { passive: true });
+
+  tapLeft.forEach(function(el){ el.addEventListener('click', prev); });
+  tapRight.forEach(function(el){ el.addEventListener('click', next); });
+
+  document.addEventListener('keydown', function(e){
+    if(!section.contains(document.activeElement) && document.activeElement !== document.body) return;
+    if(e.key === 'ArrowRight') { e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  if(audioBtn && audio) {
+    audioBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if(!audio.getAttribute('src')) return;
+      if(audio.paused) {
+        audio.play().catch(function(){});
+      } else {
+        audio.pause();
+      }
+      updateAudioIcons();
+    });
+  }
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting) {
+        var idx = Array.prototype.indexOf.call(slides, entry.target);
+        if(idx !== -1 && idx !== current) {
+          current = idx;
+          updateIndicators(current);
+          updateActiveSlide(current);
+          resetTimer();
+        }
+      }
+    });
+  }, { root: viewport, threshold: 0.55 });
+
+  slides.forEach(function(s){ observer.observe(s); });
+
+  window.addEventListener('resize', function(){
+    var w = viewport.clientWidth;
+    viewport.scrollTo({ left: current * w, behavior: 'auto' });
+  });
+
+  updateIndicators(0);
+  updateActiveSlide(0);
+  resetTimer();
+  updateAudioIcons();
+  tryAutoplay();
+})();
+</script>
+</section>
