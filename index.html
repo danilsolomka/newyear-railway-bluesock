@@ -1,3 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Новогоднее поздравление от Юго-Восточной железной дороги">
+  <title>С Новым Годом! — ЮВЖД</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+
 <section class="vb-g7c" data-section-name="Поздравительная открытка" aria-label="Поздравительная фото-карусель" data-vibeblock-unique-section="yes">
 <style>
   .vb-g7c,
@@ -117,7 +136,7 @@
   .vb-g7c__text {
     font-family: var(--t-text-font, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif);
     font-size: clamp(16px, 4.5vw, 22px);
-    line-height: 1.25; /* Уменьшенный межстрочный интервал */
+    line-height: 1.25;
     opacity: 0.9;
     margin: 0;
     text-wrap: pretty;
@@ -198,6 +217,7 @@
     fill: currentColor;
   }
 
+  /* Desktop: phone frame — работает ТОЛЬКО на больших экранах */
   @media (min-width: 769px) {
     .vb-g7c {
       display: flex;
@@ -289,13 +309,11 @@
     </svg>
   </button>
 
-  <!-- ОБНОВЛЕННАЯ ССЫЛКА НА АУДИО -->
-  <audio id="vb-g7c-audio" loop preload="auto" src="https://dl.dropboxusercontent.com/scl/fi/xd2wry2ss13o706kz9zvy/Nu_pogodi_-_Net_Ded_Moroz_75339320-mp3cut.net.mp3?rlkey=elzo97fc5fh8ku0ga6zf5f4dh&st=udbi4ipm&dl=0&raw=1"></audio>
+  <audio id="vb-g7c-audio" loop preload="auto" src="https://dl.dropboxusercontent.com/scl/fi/10xseko1qn42sbu0sxbaw/Pesni_iz_sovetskikh_filmov_-_Tri_belykh_konya_CHarodei_68994952.mp3?rlkey=1wk1iub1jd31iqqmgvupaj5yr&st=n3qi8pph&dl=0&raw=1"></audio>
 
   <div class="vb-g7c__viewport" id="vb-g7c-viewport">
-    <!-- СЛАЙД 1: ОБНОВЛЕННОЕ ИЗОБРАЖЕНИЕ -->
     <div class="vb-g7c__slide is-active" aria-roledescription="slide" aria-label="Слайд 1 из 10">
-      <img class="vb-g7c__slide-bg" alt="" loading="eager" decoding="async" src="https://dl.dropboxusercontent.com/scl/fi/oy9k25mmnap7ys8cxwt1w/qwen_image_1792269704707.jpg?rlkey=km5r19rfd39ue6ajbxi9oisa5&st=evtdzzgy&dl=0&raw=1">
+      <img class="vb-g7c__slide-bg" alt="" loading="eager" decoding="async" src="https://dl.dropboxusercontent.com/scl/fi/5n11ii1ngmrjrwruvdtx8/qwen_image_1792270458029.jpg?rlkey=419pm8k2vl7yjlq7p0swcgtfz&st=8iawo7xz&dl=0&raw=1">
       <div class="vb-g7c__slide-overlay"></div>
       <div class="vb-g7c__tap-area vb-g7c__tap-area--left" aria-hidden="true"></div>
       <div class="vb-g7c__tap-area vb-g7c__tap-area--right" aria-hidden="true"></div>
@@ -438,9 +456,9 @@
 
   function getDurationForSlide(index) {
     if (index === 0) {
-      return 10000; // 10 секунд для первого слайда
+      return 10000;
     }
-    return 6500; // 6.5 секунд для всех остальных слайдов
+    return 6500;
   }
 
   function updateAudioIcons() {
@@ -609,3 +627,6 @@
 })();
 </script>
 </section>
+
+</body>
+</html>
